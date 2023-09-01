@@ -10,9 +10,16 @@ export interface IAppProps {
   taskList: ITask[];
   setTaskList?: React.Dispatch<React.SetStateAction<ITask[]>>;
   task?: ITask | null;
+  handleUpdate?(id: number, title: string, difficulty: number): void;
 }
 
-export function TaskForm({ btnText, taskList, setTaskList, task }: IAppProps) {
+export function TaskForm({
+  btnText,
+  taskList,
+  setTaskList,
+  task,
+  handleUpdate,
+}: IAppProps) {
   const [id, setId] = useState<number>(0);
   const [title, setTitle] = useState<string>("");
   const [difficulty, setDifficulty] = useState<number>(0);
@@ -27,14 +34,19 @@ export function TaskForm({ btnText, taskList, setTaskList, task }: IAppProps) {
 
   const addTaskHandler = (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const id = Math.floor(Math.random() * 1000);
 
-    const newTask: ITask = { id, title, difficulty };
+    if (handleUpdate) {
+      handleUpdate(id, title, difficulty);
+    } else {
+      const id = Math.floor(Math.random() * 1000);
 
-    setTaskList!([...taskList, newTask]);
+      const newTask: ITask = { id, title, difficulty };
 
-    setTitle("");
-    setDifficulty(0);
+      setTaskList!([...taskList, newTask]);
+
+      setTitle("");
+      setDifficulty(0);
+    }
   };
 
   const handleChange = (e: ChangeEvent<HTMLInputElement>) => {
